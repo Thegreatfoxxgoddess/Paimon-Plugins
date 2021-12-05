@@ -1,6 +1,6 @@
 """Create Cool Among US Stickers"""
 
-# Copyright (C) 2020 BY paimon
+# Copyright (C) 2020 BY paimon-X
 # All rights reserved.
 # Author : https://github.com/KeyZenD ( FTG Modules )
 # Ported By Github/code-rgb [TG- @deleteduser420]
@@ -77,7 +77,7 @@ async def amongus_gen(text: str, clr: int) -> str:
     url = "https://raw.githubusercontent.com/code-rgb/AmongUs/master/"
     font = ImageFont.truetype(BytesIO(get(url + "bold.ttf").content), 60)
     imposter = Image.open(BytesIO(get(f"{url}{clr}.png").content))
-    text_ = "\n".join(["\n".join(wrap(part, 30)) for part in text.split("\n")])
+    text_ = "\n".join("\n".join(wrap(part, 30)) for part in text.split("\n"))
     w, h = ImageDraw.Draw(Image.new("RGB", (1, 1))).multiline_textsize(
         text_, font, stroke_width=2
     )

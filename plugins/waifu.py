@@ -22,7 +22,7 @@ from paimon.utils import deEmojify
     allow_via_bot=False,
 )
 async def anime_sticker(message: Message):
-    """Creates random anime sticker!"""
+    """ Creates random anime sticker! """
     replied = message.reply_to_message
     args = message.filtered_input_str
     if args:

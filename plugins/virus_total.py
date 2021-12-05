@@ -22,7 +22,7 @@ API_KEY = os.environ.get("VT_API_KEY", None)
     },
 )
 async def _scan_file(msg: Message):
-    """scan files and get scan id"""
+    """ scan files and get scan id """
     if API_KEY is None:
         await msg.edit(
             "You have to sign up on `virustotal.com` and get `API_KEY` "
@@ -46,7 +46,7 @@ async def _scan_file(msg: Message):
     )
     dls = os.path.join(Config.DOWN_PATH, os.path.basename(dls_loc))
     await msg.edit(
-        f"`Processing your file`, **File_size:** `{humanbytes(size_of_file)}`"
+        f"`Processing your file...`, **File_size:** `{humanbytes(size_of_file)}`"
     )
     response = scan_file(dls)
     os.remove(dls)
@@ -103,11 +103,11 @@ async def _scan_file(msg: Message):
 """
         )
     else:
-        await msg.edit("`File is clean ✅`")
+        await msg.edit("`File is clean`")
 
 
 def scan_file(path: str) -> str:
-    """scan file"""
+    """ scan file """
     url = "https://www.virustotal.com/vtapi/v2/file/scan"
     path_name = path.split("/")[-1]
 
@@ -118,7 +118,7 @@ def scan_file(path: str) -> str:
 
 
 def get_report(sha1: str) -> str:
-    """get report of files"""
+    """ get report of files """
     url = "https://www.virustotal.com/vtapi/v2/file/report"
     params = {"apikey": API_KEY, "resource": sha1, "allinfo": "False"}
     response = requests.get(url, params=params)

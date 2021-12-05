@@ -18,7 +18,7 @@ from paimon import Message, pool, paimon
     del_pre=True,
 )
 async def zippyshare(message: Message):
-    """zippy to direct"""
+    """ zippy to direct """
     url = message.input_str
     await message.edit("`Generating url ....`")
     try:

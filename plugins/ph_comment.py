@@ -27,7 +27,7 @@ from validators.url import url
     check_downpath=True,
 )
 async def ph_comment(message: Message):
-    """Create P*rnhub Comment for Replied User"""
+    """ Create P*rnhub Comment for Replied User """
     replied = message.reply_to_message
     if replied:
         user = replied.forward_from or replied.from_user

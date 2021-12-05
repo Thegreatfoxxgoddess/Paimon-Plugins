@@ -16,16 +16,16 @@ from paimon.utils.exceptions import StopConversation
     },
 )
 async def sangmata_(message: Message):
-    """Get User's Updated previous Names and Usernames"""
+    """ Get User's Updated previous Names and Usernames """
     replied = message.reply_to_message
     if not replied:
-        await message.err("```Responda para obter historico de username...```", del_in=5)
+        await message.err("```Reply to get Name and Username History...```", del_in=5)
         return
     user = replied.from_user.id
     chat = "@Sangmatainfo_bot"
-    await message.edit("```Obtendo informações, aguarde...```")
+    await message.edit("```Getting info, please wait...```")
     msgs = []
-    ERROR_MSG = "primeiro, desbloqueie @Sangmatainfo_bot."
+    ERROR_MSG = "For your kind information, you blocked @Sangmatainfo_bot, Unblock it"
     try:
         async with paimon.conversation(chat) as conv:
             try:
@@ -38,18 +38,18 @@ async def sangmata_(message: Message):
             msgs.append(await conv.get_response(timeout=3, mark_read=True))
     except StopConversation:
         pass
-    name = "Historico de Nomes"
-    username = "Historico de Usernames"
+    name = "Name History"
+    username = "Username History"
     for msg in msgs:
         if "-u" in message.flags:
             if msg.text.startswith("No records found"):
-                await message.edit("```Usuario nunca mudou username...```", del_in=5)
+                await message.edit("```User never changed his/her Username...```", del_in=20)
                 return
             if msg.text.startswith(username):
                 await message.edit(f"`{msg.text}`")
         else:
             if msg.text.startswith("No records found"):
-                await message.edit("```Usuario nunca mudou nome...```", del_in=5)
+                await message.edit("```User never changed his/her Name...```", del_in=20)
                 return
             if msg.text.startswith(name):
                 await message.edit(f"`{msg.text}`")

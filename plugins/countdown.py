@@ -18,7 +18,7 @@ from paimon import Message, paimon
     allow_via_bot=False,
 )
 async def count_it_down(message: Message):
-    """Start A CountDown"""
+    """ Start A CountDown """
     reply = message.reply_to_message
     args = message.input_str
     if args:

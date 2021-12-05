@@ -1,6 +1,6 @@
 """Get Your Telegram Stats"""
 
-# For paimon
+# For paimon-X
 # Idea : https://github.com/kantek/.../kantek/plugins/private/stats.py
 # Module By: github/code-rgb [TG - @DeletedUser420]
 

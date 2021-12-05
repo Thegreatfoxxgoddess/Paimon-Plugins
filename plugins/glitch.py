@@ -19,7 +19,7 @@ Glitched = Config.DOWN_PATH + "glitch.gif"
     },
 )
 async def glitch_(message: Message):
-    """Create Glitch effect in any media"""
+    """ Create Glitch effect in any media """
     replied = message.reply_to_message
     if not (
         replied
