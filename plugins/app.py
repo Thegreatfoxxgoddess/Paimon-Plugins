@@ -54,24 +54,15 @@ async def app(message: Message):
             .findNext("div", "uzcko")
             .img["data-src"]
         )
-        app_details = "<a href='" + app_icon + "'>📲&#8203;</a>"
+        app_details = "<a href='" + app_icon + "'>&#8203;</a>"
         app_details += " <b>" + app_name + "</b>"
-        app_details += "\n\n<code>Developer :</code> <a href='" + app_dev_link + "'>"
-        app_details += app_dev + "</a>"
-        app_details += "\n<code>Rating :</code> " + app_rating.replace(
-            "Rated ", "⭐️ "
-        ).replace(" out of ", "/").replace(" stars", "", 1).replace(
-            " stars", "⭐️"
-        ).replace(
-            "five", "5"
-        )
         app_details += (
             "\n<code>Features :</code> <a href='"
             + app_link
             + "'>View in Play Store</a>"
         )
         await message.edit(
-            app_details, disable_web_page_preview=False, parse_mode="html"
+            app_details, disable_web_page_preview=True, parse_mode="html"
         )
     except IndexError:
         await message.edit("No result found in search. Please enter **Valid app name**")
