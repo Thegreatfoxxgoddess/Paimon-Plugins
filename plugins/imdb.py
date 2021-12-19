@@ -7,12 +7,10 @@ import requests
 import wget
 from operator import truediv
 from PIL import Image
-
+from paimon.config import API_ONE_URL, API_TWO_URL
 from paimon import paimon, Message, Config, pool
 
 THUMB_PATH = Config.DOWN_PATH + "imdb_thumb.jpg"
-API_ONE_URL = os.environ.get("IMDB_API_ONE_URL")
-API_TWO_URL = os.environ.get("IMDB_API_TWO_URL")
 
 
 @paimon.on_cmd("imdb", about={
