@@ -57,7 +57,7 @@ async def app(message: Message):
         app_details = "<a href='" + app_icon + "'>&#8203;</a>"
         app_details += " <b>" + app_name + "</b>"
         app_details += (
-            "\n<code>Features :</code> <a href='"
+            "\n<a href='"
             + app_link
             + "'>View in Play Store</a>"
         )
