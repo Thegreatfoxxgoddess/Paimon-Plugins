@@ -1,4 +1,6 @@
+# kanged from github.com/theuserge/userge
 # Edited by aliciadark
+
 import json
 import os
 import requests
@@ -49,11 +51,11 @@ async def imdb(message: Message):
 <b>Country: </b><code>{mov_country}</code>
 <b>Language: </b><code>{mov_language}</code>
 <b>Cast Info: </b>
-  <b>Director: </b><code>{director}</code>
-  <b>Writer: </b><code>{writer}</code>
-  <b>Stars: </b><code>{stars}</code>
+<b>Director: </b><code>{director}</code>
+<b>Writer: </b><code>{writer}</code>
+<b>Stars: </b><code>{stars}</code>
 
-<b>IMDB URL Link: </b>{mov_link}
+<b>IMDB Link: </b> <b> [IMDB]({mov_link})</b>
 
 <b>Story Line : </b><em>{story_line}</em>"""
     except IndexError:
