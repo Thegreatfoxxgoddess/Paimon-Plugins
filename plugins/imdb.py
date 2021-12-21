@@ -57,8 +57,7 @@ async def imdb(message: Message):
 <b>Writer: </b><code>{writer}</code>
 <b>Stars: </b><code>{stars}</code>
 
-<b>IMDB Link: </b> <b>[IMDB]({mov_link})</b>
-<b>[google](google.com)</b>"
+<b>IMDB Link: </b><a href={mov_link}>IMDB </a>
 <b>Story Line : </b><em>{story_line}</em>"""
     except IndexError:
         await message.edit("enter a valid movie name!")
