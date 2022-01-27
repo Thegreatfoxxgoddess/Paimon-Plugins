@@ -7,7 +7,7 @@ import asyncio
 
 from pyrogram.errors import FloodWait
 
-from resources.quotes import ENGLISH_QUOTES, HINDI_QUOTES
+from resources.quotes import ENGLISH_QUOTES, MUSIC_LIST
 from paimon import paimon, Message, get_collection
 
 BIO_UPDATION = False
@@ -48,8 +48,8 @@ async def auto_bio(msg: Message):
             "Auto Bio Updation is **Stopped** Successfully...", log=__name__, del_in=5)
         return
 
-    if 'hi' in msg.input_str.lower():
-        BIO_QUOTES = HINDI_QUOTES
+    if 'm' in msg.input_str.lower():
+        BIO_QUOTES = MUSIC_LIST
     else:
         BIO_QUOTES = ENGLISH_QUOTES
 
