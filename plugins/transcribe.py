@@ -7,7 +7,8 @@ from asyncio import sleep
 from aiohttp import ClientSession
 from pydub import AudioSegment
 from pydub.exceptions import CouldntDecodeError
-from paimon import Config, Message, paimon
+
+from paimon import paimon, Message, Config
 from paimon.plugins.misc.download import tg_download, url_download
 from paimon.utils.exceptions import ProcessCanceled
 
@@ -22,8 +23,8 @@ class WitAiAPI:
 
     def __init__(self, lang):
         self.api_keys = {}
-        for i in filter(lambda x: x.startswith("WIT_AI_API_"), os.environ):
-            self.api_keys.update({i.split("WIT_AI_API_")[1].lower(): os.environ.get(i)})
+        for i in filter(lambda x: x.startswith('WIT_AI_API_'), os.environ):
+            self.api_keys.update({i.split('WIT_AI_API_')[1].lower(): os.environ.get(i)})
         self.api_url = "https://api.wit.ai"
         self.lang = lang
         self.chunks = None
@@ -32,33 +33,27 @@ class WitAiAPI:
     def has_api_key(self):
         return self.api_keys.get(self.lang)
 
-    async def __transcribe_chunk(self, chunk, lang="ar") -> (str, str):
+    async def __transcribe_chunk(self, chunk, lang='ar') -> (str, str):
         """
         Based on https://github.com/charslab/TranscriberBot/blob/
         823b1423832b7117ad41c83abb3e25d58dd9e789/src/audiotools/
         speech.py#L13
         """
-        error = ""
         text = ""
+        error = ""
         headers = {
-            "authorization": f"Bearer {self.api_keys[lang]}",
-            "accept": "application/vnd.wit.20200513+json",
-            "content-type": "audio/raw;encoding=signed-integer;bits=16;rate=8000;endian=little",
+            'authorization': f'Bearer {self.api_keys[lang]}',
+            'accept': 'application/vnd.wit.20200513+json',
+            'content-type': 'audio/raw;encoding=signed-integer;bits=16;rate=8000;endian=little',
         }
         try:
             async with ClientSession() as session:
                 async with session.post(
-                    f"{self.api_url}/speech",
-                    headers=headers,
-                    data=io.BufferedReader(io.BytesIO(chunk.raw_data)),
-                ) as resp:
+                        f"{self.api_url}/speech", headers=headers,
+                        data=io.BufferedReader(io.BytesIO(chunk.raw_data))) as resp:
                     if resp.status == 200:
                         response = await resp.json()
-                        text = (
-                            response["_text"]
-                            if "_text" in response
-                            else response["text"]
-                        )
+                        text = response['_text'] if '_text' in response else response['text']
         except Exception as e:
             error = f"Could not transcribe chunk: {e}\n{traceback.format_exc()}"
 
@@ -71,10 +66,8 @@ class WitAiAPI:
         823b1423832b7117ad41c83abb3e25d58dd9e789/
         src/audiotools/speech.py#L49
         """
-        return [
-            segment[i : i + int(length * 1000)]
-            for i in range(0, len(segment), int(length * 1000))
-        ]
+        return [segment[i:i + int(length * 1000)]
+                for i in range(0, len(segment), int(length * 1000))]
 
     @staticmethod
     async def __preprocess_audio(audio):
@@ -105,25 +98,21 @@ class WitAiAPI:
                 yield text, error
 
         except CouldntDecodeError:
-            yield None, "`Error decoding the audio file. ", "Ensure that the provided audio is a valid audio file!`"
+            yield None, "`Error decoding the audio file. " \
+                        "Ensure that the provided audio is a valid audio file!`"
 
 
-@paimon.on_cmd(
-    "stt",
-    about={
-        "header": "transcribe a file (speech to text)",
-        "options": {"-t": "send text to telegram as well as the transcription file"},
-        "usage": "{tr}stt lang [file / folder path | direct link | reply to telegram file]",
-        "examples": ["{tr}stt en link", "{tr}stt ar -t link"],
-    },
-    check_downpath=True,
-)
+@paimon.on_cmd("stt", about={
+    'header': "transcribe a file (speech to text)",
+    'options': {'-t': 'send text to telegram as well as the transcription file'},
+    'usage': "{tr}stt lang [file / folder path | direct link | reply to telegram file]",
+    'examples': ['{tr}stt en link', '{tr}stt ar -t link']}, check_downpath=True)
 async def stt_(message: Message):
     """ Speech to text using Wit.ai """
-    send_text = bool("v" in message.flags)
+    send_text = bool('v' in message.flags)
     replied = message.reply_to_message
     message_id = replied.message_id if replied else message.message_id
-    regex = re.compile(r"([\S]*)(?: |)([\s\S]*)")
+    regex = re.compile(r'([\S]*)(?: |)([\s\S]*)')
     match = regex.search(message.filtered_input_str)
     if not match:
         await message.edit("`Please read .help stt`")
@@ -131,7 +120,7 @@ async def stt_(message: Message):
     lang = match.group(1).lower()
     api = WitAiAPI(lang)
     if not api.has_api_key():
-        await message.edit(f"`Please set WIT_AI_API_{lang.upper()} variable first!`")
+        await message.edit(f'`Please set WIT_AI_API_{lang.upper()} variable first!`')
         return
     dl_loc = ""
     file_name = ""
@@ -140,11 +129,11 @@ async def stt_(message: Message):
             dl_loc, _ = await tg_download(message, replied)
             # Try to get file name from the media file.
             try:
-                if hasattr(replied.audio, "file_name"):
+                if hasattr(replied.audio, 'file_name'):
                     file_name = replied.audio.file_name
-                elif hasattr(replied.video, "file_name"):
+                elif hasattr(replied.video, 'file_name'):
                     file_name = replied.video.file_name
-                elif hasattr(replied.document, "file_name"):
+                elif hasattr(replied.document, 'file_name'):
                     file_name = replied.document.file_name
                 else:
                     file_name = os.path.basename(dl_loc)
@@ -158,7 +147,8 @@ async def stt_(message: Message):
             return
     else:
         input_str = match.group(2) if match.group(2) else ""
-        is_url = re.search(r"(?:https?|ftp)://[^|\s]+\.[^|\s]+", input_str)
+        is_url = re.search(
+            r"(?:https?|ftp)://[^|\s]+\.[^|\s]+", input_str)
         if is_url:
             try:
                 dl_loc, _ = await url_download(message, message.filtered_input_str)
@@ -186,10 +176,8 @@ async def stt_(message: Message):
         processed += 1
         await message.edit(f"`Processed chunk {processed} of {api.chunks}`")
     if send_text:
-        text_chunks = [
-            api.text[i : i + Config.MAX_MESSAGE_LENGTH]
-            for i in range(0, len(api.text), Config.MAX_MESSAGE_LENGTH)
-        ]
+        text_chunks = [api.text[i:i + Config.MAX_MESSAGE_LENGTH] for i in
+                       range(0, len(api.text), Config.MAX_MESSAGE_LENGTH)]
         if len(text_chunks) == 1:
             await message.edit(text_chunks[0])
         else:
@@ -199,8 +187,5 @@ async def stt_(message: Message):
                 await sleep(2)
     # send transcription text file
     await message.client.send_as_file(
-        chat_id=message.chat.id,
-        reply_to_message_id=message_id,
-        text=api.text,
-        filename=f"{file_name}_{lang}_transcription.txt",
-    )
+        chat_id=message.chat.id, reply_to_message_id=message_id,
+        text=api.text, filename=f"{file_name}_{lang}_transcription.txt")

@@ -4,18 +4,15 @@ Syntax: .github USERNAME
 """
 
 import requests
-from paimon import Message, paimon
+
+from paimon import paimon, Message
 
 
-@paimon.on_cmd(
-    "github",
-    about={
-        "header": "Get info about an GitHub User",
-        "flags": {"-l": "repo limit : default to 5"},
-        "usage": ".github [flag] [username]",
-        "examples": [".github cyberboysumanjay", ".github -l5 cyberboysumanjay"],
-    },
-)
+@paimon.on_cmd("github", about={
+    'header': "Get info about an GitHub User",
+    'flags': {'-l': "repo limit : default to 5"},
+    'usage': ".github [flag] [username]",
+    'examples': [".github cyberboysumanjay", ".github -l5 cyberboysumanjay"]})
 async def fetch_github_info(message: Message):
     replied = message.reply_to_message
     username = message.filtered_input_str
@@ -30,12 +27,12 @@ async def fetch_github_info(message: Message):
         await message.edit("`fetching github info ...`")
         data = res.json()
         photo = data["avatar_url"]
-        if data["bio"]:
-            data["bio"] = data["bio"].strip()
+        if data['bio']:
+            data['bio'] = data['bio'].strip()
         repos = []
         sec_res = requests.get(data["repos_url"])
         if sec_res.status_code == 200:
-            limit = int(message.flags.get("-l", 5))
+            limit = int(message.flags.get('-l', 5))
             for repo in sec_res.json():
                 repos.append(f"[{repo['name']}]({repo['html_url']})")
                 limit -= 1
@@ -53,17 +50,13 @@ async def fetch_github_info(message: Message):
 📊 **Public Repos** : `{public_repos}`
 📄 **Public Gists** : `{public_gists}`
 🔗 **Profile Created** : `{created_at}`
-✏️ **Profile Updated** : `{updated_at}`\n""".format(
-            **data
-        )
+✏️ **Profile Updated** : `{updated_at}`\n""".format(**data)
         if repos:
-            template += "🔍 **Some Repos** : " + " | ".join(repos)
-        await message.client.send_photo(
-            chat_id=message.chat.id,
-            caption=template,
-            photo=photo,
-            disable_notification=True,
-        )
+            template += "🔍 **Some Repos** : " + ' | '.join(repos)
+        await message.client.send_photo(chat_id=message.chat.id,
+                                        caption=template,
+                                        photo=photo,
+                                        disable_notification=True)
         await message.delete()
     else:
         await message.edit("No user found with `{}` username!".format(username))

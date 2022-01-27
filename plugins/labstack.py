@@ -2,30 +2,26 @@
 # Author: Sumanjay (https://github.com/cyberboysumanjay) (@cyberboysumanjay)
 # All rights reserved.
 
-import asyncio
-import math
 import os
-import random
 import re
+import math
+import asyncio
 import string
+import random
 from urllib.parse import unquote_plus
 
 import requests
 from pySmartDL import SmartDL
-from paimon import Config, Message, paimon
-from paimon.utils import humanbytes, progress
+
+from paimon import paimon, Config, Message
+from paimon.utils import progress, humanbytes
 
 
-@paimon.on_cmd(
-    "labstack",
-    about={
-        "header": "Uploads and shares files for free on Labstack,"
-        "without any restriction on file size and speed.",
-        "usage": "{tr}labstack : [Direct Link | Reply to Telegram Media]",
-        "examples": "{tr}labstack https://mirror.nforce.com/pub/speedtests/10mb.bin",
-    },
-    del_pre=True,
-)
+@paimon.on_cmd("labstack", about={
+    'header': "Uploads and shares files for free on Labstack,"
+    "without any restriction on file size and speed.",
+    'usage': "{tr}labstack : [Direct Link | Reply to Telegram Media]",
+    'examples': "{tr}labstack https://mirror.nforce.com/pub/speedtests/10mb.bin"}, del_pre=True)
 async def labstack(message: Message):
     await message.edit("Initiating...")
     if not os.path.isdir(Config.DOWN_PATH):
@@ -52,51 +48,39 @@ async def labstack(message: Message):
                 while not downloader.isFinished():
                     if message.process_is_canceled:
                         downloader.stop()
-                        raise Exception("Process Cancelled!")
-                    total_length = downloader.filesize or 0
+                        raise Exception('Process Cancelled!')
+                    total_length = downloader.filesize if downloader.filesize else 0
                     downloaded = downloader.get_dl_size()
                     percentage = downloader.get_progress() * 100
                     speed = downloader.get_speed(human=True)
                     estimated_total_time = downloader.get_eta(human=True)
-                    progress_str = (
-                        "__{}__\n"
-                        + "```[{}{}]```\n"
-                        + "**Progress** : `{}%`\n"
-                        + "**URL** : `{}`\n"
-                        + "**FILENAME** : `{}`\n"
-                        + "**Completed** : `{}`\n"
-                        + "**Total** : `{}`\n"
-                        + "**Speed** : `{}`\n"
-                        + "**ETA** : `{}`"
-                    )
+                    progress_str = \
+                        "__{}__\n" + \
+                        "```[{}{}]```\n" + \
+                        "**Progress** : `{}%`\n" + \
+                        "**URL** : `{}`\n" + \
+                        "**FILENAME** : `{}`\n" + \
+                        "**Completed** : `{}`\n" + \
+                        "**Total** : `{}`\n" + \
+                        "**Speed** : `{}`\n" + \
+                        "**ETA** : `{}`"
                     progress_str = progress_str.format(
                         "Downloading",
-                        "".join(
-                            (
-                                Config.FINISHED_PROGRESS_STR
-                                for i in range(math.floor(percentage / 5))
-                            )
-                        ),
-                        "".join(
-                            (
-                                Config.UNFINISHED_PROGRESS_STR
-                                for i in range(20 - math.floor(percentage / 5))
-                            )
-                        ),
+                        ''.join((Config.FINISHED_PROGRESS_STR
+                                 for i in range(math.floor(percentage / 5)))),
+                        ''.join((Config.UNFINISHED_PROGRESS_STR
+                                 for i in range(20 - math.floor(percentage / 5)))),
                         round(percentage, 2),
                         url,
                         file_name,
                         humanbytes(downloaded),
                         humanbytes(total_length),
                         speed,
-                        estimated_total_time,
-                    )
+                        estimated_total_time)
                     count += 1
                     if count >= 5:
                         count = 0
-                        await message.try_to_edit(
-                            progress_str, disable_web_page_preview=True
-                        )
+                        await message.try_to_edit(progress_str, disable_web_page_preview=True)
                     await asyncio.sleep(1)
             except Exception as d_e:
                 await message.err(d_e)
@@ -114,38 +98,40 @@ async def labstack(message: Message):
             message=message.reply_to_message,
             file_name=Config.DOWN_PATH,
             progress=progress,
-            progress_args=(message, "Downloading"),
+            progress_args=(message, "Downloading")
         )
 
     filesize = os.path.getsize(dl_loc)
     filename = os.path.basename(dl_loc)
 
     file = {"name": filename, "type": "", "size": int(filesize)}
-    user_id = "".join(
-        random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits)
-        for _ in range(16)
-    )
+    user_id = ''.join(
+        random.choice(string.ascii_lowercase + string.ascii_uppercase +
+                      string.digits) for _ in range(16))
     data = {"ttl": 604800, "files": [file]}
     headers = {
-        "up-user-id": user_id,
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)"
-        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
+        'up-user-id':
+        user_id,
+        'User-Agent':
+        'Mozilla/5.0 (X11; Linux x86_64)'
+        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36'
     }
+    kwargs = dict(headers=headers, verify=False)
+
     r = requests.post(
-        "https://up.labstack.com/api/v1/links", json=data, headers=headers
-    ).json()
+        "https://up.labstack.com/api/v1/links", json=data, **kwargs).json()
 
     files = {
-        "files": (filename, open(dl_loc, "rb")),
+        'files': (filename, open(dl_loc, 'rb')),
     }
-    send_url = "https://up.labstack.com/api/v1/links/{}/send".format(r["code"])
-    response = requests.post(send_url, headers=headers, files=files)
+    send_url = "https://up.labstack.com/api/v1/links/{}/send".format(
+        r['code'])
+    response = requests.post(send_url, files=files, **kwargs)
     if (response.status_code) == 200:
-        link = "https://up.labstack.com/api/v1/links/{}/receive".format(r["code"])
-        await message.edit(
-            f"**Filename**: `{filename}`\n**Size**: "
-            f"`{humanbytes(filesize)}`\n\n"
-            f"**Link**: {link}\n`Expires in 7 Days`"
-        )
+        link = (
+            "https://up.labstack.com/api/v1/links/{}/receive".format(r['code']))
+        await message.edit(f"**Filename**: `{filename}`\n**Size**: "
+                           f"`{humanbytes(filesize)}`\n\n"
+                           f"**Link**: {link}\n`Expires in 7 Days`")
     else:
         await message.edit("Request Failed!", del_in=5)
