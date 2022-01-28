@@ -14,7 +14,7 @@ from paimon import Message, paimon
     },
 )
 async def text_to_speech(message: Message):
-    req_file_name = "gtts.mp3"
+    req_file_name = "gtts.ogg"
     reply = message.reply_to_message
     input_str = message.input_str
     def_lang = "en"
@@ -40,7 +40,7 @@ async def text_to_speech(message: Message):
         text = reply.text or reply.caption
     if not text:
         await message.err(
-            ":: Input Not Found ::\nProvide text to convert to voice !", del_in=7
+            ":: Input Not Found ::\nProvide text to convert to voice !", del_in=5
         )
         return
     try:
@@ -49,7 +49,6 @@ async def text_to_speech(message: Message):
         speeched.save(req_file_name)
         meta = XMan(CPR(req_file_name))
         a_len = 0
-        a_cap = f"Language Code:  **{def_lang.upper()}**"
         if meta and meta.has("duration"):
             a_len = meta.get("duration").seconds
         await message.edit("Uploading...")
