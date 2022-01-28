@@ -14,7 +14,7 @@ from paimon import Message, paimon
     },
 )
 async def text_to_speech(message: Message):
-    req_file_name = "gtts.ogg"
+    req_file_name = "voice.opus"
     reply = message.reply_to_message
     input_str = message.input_str
     def_lang = "en"
