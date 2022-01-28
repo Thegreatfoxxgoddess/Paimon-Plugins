@@ -46,10 +46,6 @@ async def text_to_speech(message: Message):
     try:
         await message.edit("Processing..")
         speeched = gTTS(text, lang=def_lang)
-        speeched.save(req_file_name)
-        meta = XMan(CPR(req_file_name))
-        a_len = 0
-        a_cap = 
         if meta and meta.has("duration"):
             a_len = meta.get("duration").seconds
         await message.edit("Uploading...")
