@@ -49,6 +49,7 @@ async def text_to_speech(message: Message):
         speeched.save(req_file_name)
         meta = XMan(CPR(req_file_name))
         a_len = 0
+        a_cap = 0
         if meta and meta.has("duration"):
             a_len = meta.get("duration").seconds
         await message.edit("Uploading...")
