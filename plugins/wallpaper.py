@@ -10,7 +10,6 @@ from PIL import Image
 
 from paimon import paimon, Message, pool
 from paimon.plugins.misc import upload
-from paimon import upload
 
 @paimon.on_cmd("wall", about={
     'header': "Search Wallpaper",
