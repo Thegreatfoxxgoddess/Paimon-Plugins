@@ -11,7 +11,7 @@ from PIL import Image
 from paimon import paimon, Message, pool
 from paimon.plugins.misc import upload
 
-@paimon.on_cmd("walls", about={
+@paimon.on_cmd("wally", about={
     'header': "Search Wallpaper",
     'flags': {
         '-l': "Limit of Wallpapers",
