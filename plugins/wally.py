@@ -32,7 +32,6 @@ async def wall_(msg: Message):
         await msg.edit(f"`Seraching Wallpapers for {qu}`")
         results = requests.get(
             "https://wallhaven.cc/api/v1/search"
-            f"photos?client_id=HWlOs9dNZIbYEkjp87fiEzC9rmE6rKM64tBqXBOLzu8&query={qu}"
         )
 
         if results.status_code != 200:
