@@ -1,7 +1,5 @@
 #playlist for now playing
 
-#playlist for now playing
-
 MUSIC_LIST = [
     "Now playing : 回忆观影券 - In K & 王忻辰  | t.me/my_thingsuwu",
     "Now playing : Chikatto Chika Chikkatsu - Lizz Robinett | t.me/my_thingsuwu",
