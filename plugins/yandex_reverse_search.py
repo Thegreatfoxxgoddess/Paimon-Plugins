@@ -15,7 +15,7 @@ from paimon import paimon, Config, Message, pool
     'note': "Gif & Animated Stickers won't work!"}, check_downpath=True)
 async def labstack(message: Message):
     replied = message.reply_to_message
-    if replied and (replied.sticker or replied.photo):
+    if replied and (replied.sticker or replied.photo or replied.video or replied.gif):
         await message.edit("`processing ...`")
         dl_loc = await message.client.download_media(
             message=message.reply_to_message,
