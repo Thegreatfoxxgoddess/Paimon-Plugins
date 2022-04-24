@@ -8,7 +8,7 @@
 import os
 
 from aiohttp import ClientSession
-from Python_ARQ import ARQ
+# from Python_ARQ import ARQ
 from paimon import Config, Message, paimon
 from paimon.plugins.misc.download import url_download
 
