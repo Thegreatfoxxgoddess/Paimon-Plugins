@@ -74,7 +74,7 @@ async def date_time_func(message: Message):
         timezones = [COUNTRY_CITY]
     else:
         await message.edit(
-            f"`It's`  **{dt.now().strftime(t_form)}** `on` **{dt.now().strftime(d_form)}**  `here.`"
+            f"it's  **{dt.now().strftime(t_form)}**"
         )
         return
 
